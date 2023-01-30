@@ -3,6 +3,7 @@ package output
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/fluent/fluent-operator/apis/fluentd/v1alpha1/plugins/custom"
 
 	"github.com/fluent/fluent-operator/apis/fluentd/v1alpha1/plugins"
 	"github.com/fluent/fluent-operator/apis/fluentd/v1alpha1/plugins/common"
@@ -41,7 +42,8 @@ type Output struct {
 	// out_stdout plugin
 	Stdout *Stdout `json:"stdout,omitempty"`
 	// out_loki plugin
-	Loki *Loki `json:"loki,omitempty"`
+	Loki         *Loki                `json:"loki,omitempty"`
+	CustomPlugin *custom.CustomPlugin `json:"customPlugin,omitempty"`
 }
 
 // DeepCopyInto implements the DeepCopyInto interface.
@@ -140,9 +142,11 @@ func (o *Output) Params(loader plugins.SecretLoader) (*params.PluginStore, error
 		return o.lokiPlugin(ps, loader), nil
 	}
 
-	// if nothing defined, supposed it is a out_stdout plugin
-	ps.InsertType(string(params.StdOutputType))
-	return o.stdoutPlugin(ps, loader), nil
+	if o.Stdout != nil {
+		ps.InsertType(string(params.StdOutputType))
+		return o.stdoutPlugin(ps, loader), nil
+	}
+	return o.customOutput(ps, loader), nil
 }
 
 func (o *Output) forwardPlugin(parent *params.PluginStore, loader plugins.SecretLoader) *params.PluginStore {
@@ -585,6 +589,16 @@ func (o *Output) lokiPlugin(parent *params.PluginStore, loader plugins.SecretLoa
 }
 
 func (o *Output) stdoutPlugin(parent *params.PluginStore, loader plugins.SecretLoader) *params.PluginStore {
+	return parent
+}
+
+func (o *Output) customOutput(parent *params.PluginStore, loader plugins.SecretLoader) *params.PluginStore {
+	if o.CustomPlugin == nil {
+		return parent
+	}
+	customPlugin := o.CustomPlugin
+	child, _ := customPlugin.Params(loader)
+	parent.InsertChilds(child)
 	return parent
 }
 

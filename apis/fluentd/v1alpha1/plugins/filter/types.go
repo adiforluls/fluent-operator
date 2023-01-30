@@ -3,6 +3,7 @@ package filter
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/fluent/fluent-operator/apis/fluentd/v1alpha1/plugins/custom"
 
 	"github.com/fluent/fluent-operator/apis/fluentd/v1alpha1/plugins"
 	"github.com/fluent/fluent-operator/apis/fluentd/v1alpha1/plugins/params"
@@ -30,7 +31,8 @@ type Filter struct {
 	// The filter_parser filter plugin
 	Parser *Parser `json:"parser,omitempty"`
 	// The filter_stdout filter plugin
-	Stdout *Stdout `json:"stdout,omitempty"`
+	Stdout       *Stdout              `json:"stdout,omitempty"`
+	CustomPlugin *custom.CustomPlugin `json:"customPlugin,omitempty"`
 }
 
 // DeepCopyInto implements the DeepCopyInto interface.
@@ -80,9 +82,11 @@ func (f *Filter) Params(loader plugins.SecretLoader) (*params.PluginStore, error
 		return f.parserPlugin(ps, loader), nil
 	}
 
-	// 	// if nothing defined, supposed it is a filter_stdout plugin
-	ps.InsertType(string(params.StdoutFilterType))
-	return f.stdoutPlugin(ps, loader), nil
+	if f.Stdout != nil {
+		ps.InsertType(string(params.StdoutFilterType))
+		return f.stdoutPlugin(ps, loader), nil
+	}
+	return f.customFilter(ps, loader), nil
 }
 
 func (f *Filter) grepPlugin(parent *params.PluginStore, loader plugins.SecretLoader) *params.PluginStore {
@@ -232,6 +236,17 @@ func (f *Filter) stdoutPlugin(parent *params.PluginStore, loader plugins.SecretL
 		childs = append(childs, child)
 	}
 	parent.InsertChilds(childs...)
+	return parent
+}
+
+func (f *Filter) customFilter(parent *params.PluginStore, loader plugins.SecretLoader) *params.PluginStore {
+	if f.CustomPlugin == nil {
+		return parent
+	}
+	customPlugin := f.CustomPlugin
+	child, _ := customPlugin.Params(loader)
+	children := []*params.PluginStore{child}
+	parent.InsertChilds(children...)
 	return parent
 }
 

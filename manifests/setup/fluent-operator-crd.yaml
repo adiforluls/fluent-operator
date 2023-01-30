@@ -707,6 +707,11 @@ spec:
                   description: Filter defines all available filter plugins and their
                     parameters.
                   properties:
+                    customPlugin:
+                      properties:
+                        config:
+                          type: string
+                      type: object
                     grep:
                       description: The filter_grep filter plugin
                       properties:
@@ -4322,6 +4327,11 @@ spec:
                       - path
                       - type
                       type: object
+                    customPlugin:
+                      properties:
+                        config:
+                          type: string
+                      type: object
                     elasticsearch:
                       description: out_es plugin
                       properties:
@@ -5735,6 +5745,11 @@ spec:
                   description: Filter defines all available filter plugins and their
                     parameters.
                   properties:
+                    customPlugin:
+                      properties:
+                        config:
+                          type: string
+                      type: object
                     grep:
                       description: The filter_grep filter plugin
                       properties:
@@ -14349,6 +14364,11 @@ spec:
                       required:
                       - path
                       - type
+                      type: object
+                    customPlugin:
+                      properties:
+                        config:
+                          type: string
                       type: object
                     elasticsearch:
                       description: out_es plugin

@@ -19,6 +19,7 @@ type PluginStore struct {
 	PrefixWhitespaces string
 	// The flag whether to ignore the path field in buffer
 	IgnorePath bool
+	Content    string
 }
 
 func NewPluginStore(name string) *PluginStore {
@@ -91,7 +92,13 @@ func (ps *PluginStore) RouteLabel() string {
 }
 
 func (ps *PluginStore) String() string {
-	if ps == nil || ps.Name == "" {
+	if ps == nil {
+		return ""
+	}
+	if ps.Name == "" {
+		if ps.Content != "" {
+			return ps.Content
+		}
 		return ""
 	}
 

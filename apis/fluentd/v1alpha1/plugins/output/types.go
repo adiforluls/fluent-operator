@@ -596,9 +596,7 @@ func (o *Output) customOutput(parent *params.PluginStore, loader plugins.SecretL
 	if o.CustomPlugin == nil {
 		return parent
 	}
-	customPlugin := o.CustomPlugin
-	child, _ := customPlugin.Params(loader)
-	parent.InsertChilds(child)
+	parent, _ = o.CustomPlugin.Params(loader)
 	return parent
 }
 

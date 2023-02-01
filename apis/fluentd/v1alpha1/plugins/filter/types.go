@@ -243,10 +243,7 @@ func (f *Filter) customFilter(parent *params.PluginStore, loader plugins.SecretL
 	if f.CustomPlugin == nil {
 		return parent
 	}
-	customPlugin := f.CustomPlugin
-	child, _ := customPlugin.Params(loader)
-	children := []*params.PluginStore{child}
-	parent.InsertChilds(children...)
+	parent, _ = f.CustomPlugin.Params(loader)
 	return parent
 }
 

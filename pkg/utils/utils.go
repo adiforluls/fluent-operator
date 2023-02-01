@@ -1,23 +1,10 @@
 package utils
 
 import (
-	"bytes"
 	"crypto/md5"
-	"fmt"
 	"hash"
 	"strings"
 )
-
-func Indentation(str string) string {
-	splits := strings.Split(str, "\n")
-	var buf bytes.Buffer
-	for _, i := range splits {
-		if i != "" {
-			buf.WriteString(fmt.Sprintf("    %s\n", strings.TrimSpace(i)))
-		}
-	}
-	return buf.String()
-}
 
 func ContainString(slice []string, s string) bool {
 	for _, item := range slice {

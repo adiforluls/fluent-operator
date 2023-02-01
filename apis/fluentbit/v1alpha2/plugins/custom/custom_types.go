@@ -1,9 +1,11 @@
 package custom
 
 import (
+	"bytes"
+	"fmt"
 	"github.com/fluent/fluent-operator/apis/fluentbit/v1alpha2/plugins"
 	"github.com/fluent/fluent-operator/apis/fluentbit/v1alpha2/plugins/params"
-	"github.com/fluent/fluent-operator/pkg/utils"
+	"strings"
 )
 
 // +kubebuilder:object:generate:=true
@@ -19,6 +21,17 @@ func (c *CustomPlugin) Name() string {
 
 func (a *CustomPlugin) Params(_ plugins.SecretLoader) (*params.KVs, error) {
 	kvs := params.NewKVs()
-	kvs.Content = utils.Indentation(a.Config)
+	kvs.Content = indentation(a.Config)
 	return kvs, nil
+}
+
+func indentation(str string) string {
+	splits := strings.Split(str, "\n")
+	var buf bytes.Buffer
+	for _, i := range splits {
+		if i != "" {
+			buf.WriteString(fmt.Sprintf("    %s\n", strings.TrimSpace(i)))
+		}
+	}
+	return buf.String()
 }

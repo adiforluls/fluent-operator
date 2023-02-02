@@ -11,8 +11,8 @@ operator:
     repository: "docker"
     tag: "20.10"
   container:
-    repository: "kubesphere/fluent-operator"
-    tag: "latest"
+    repository: "iad.ocir.io/odsbuilddev/sandboxes/aditya.b.bharadwaj/fluent-operator"
+    tag: "v0"
     # FluentBit operator resources. Usually user needn't to adjust these.
   resources:
     limits:
@@ -36,7 +36,7 @@ operator:
 
 fluentbit:
   image:
-    repository: "kubesphere/fluent-bit"
+    repository: "iad.ocir.io/odsbuilddev/sandboxes/aditya.b.bharadwaj/fluent-bit"
     tag: "v2.0.6"
   # fluentbit resources. If you do want to specify resources, adjust them as necessary
   #You can adjust it based on the log volume.
@@ -145,7 +145,7 @@ fluentd:
   name: fluentd
   port: 24224
   image:
-    repository: "kubesphere/fluentd"
+    repository: "iad.ocir.io/odsbuilddev/sandboxes/aditya.b.bharadwaj/fluentd"
     tag: "v1.14.6"
   replicas: 1
   forward:

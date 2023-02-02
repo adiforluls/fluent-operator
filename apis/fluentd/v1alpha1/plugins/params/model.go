@@ -95,11 +95,8 @@ func (ps *PluginStore) String() string {
 	if ps == nil {
 		return ""
 	}
-	if ps.Name == "" {
-		if ps.Content != "" {
-			return ps.Content
-		}
-		return ""
+	if ps.Content != "" {
+		return ps.Content
 	}
 
 	var buf bytes.Buffer

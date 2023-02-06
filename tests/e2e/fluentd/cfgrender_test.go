@@ -122,6 +122,34 @@ var _ = Describe("Apply the fluentd forward CRs, comparing with the genrated con
 		})
 	})
 
+	Describe("Test create and delete the fluentd CRs - 2", func() {
+		It("E2E_FLUENTD_MAIN_APP_CONFIGURATION: fluentd clusterconfig and custom output to os", func() {
+
+			objects := []client.Object{
+				&fluentdtestcases.Fluentd,
+				&fluentdtestcases.FluentdClusterFluentdConfig1,
+				&fluentdtestcases.FluentdClusterOutputCustom,
+			}
+
+			err := CreateObjs(ctx, objects)
+			Expect(err).NotTo(HaveOccurred())
+
+			time.Sleep(time.Second * 2)
+
+			seckey := types.NamespacedName{
+				Namespace: fluentdtestcases.Fluentd.Namespace,
+				Name:      fmt.Sprintf("%s-config", fluentdtestcases.Fluentd.Name),
+			}
+			config, err := GetCfgFromSecret(ctx, seckey)
+			Expect(err).NotTo(HaveOccurred())
+
+			Expect(string(utils.ExpectedFluentdClusterCfgOutputCustom)).To(Equal(config))
+
+			err = DeleteObjs(ctx, objects)
+			Expect(err).NotTo(HaveOccurred())
+		})
+	})
+
 	Describe("Test create and delete the fluentd CRs - 4", func() {
 
 		It("E2E_FLUENTD_MAIN_APP_CONFIGURATION: fluentd mixed configs and output to multi tenant", func() {

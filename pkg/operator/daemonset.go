@@ -20,13 +20,13 @@ func MakeDaemonSet(fb fluentbitv1alpha2.FluentBit, logPath string) appsv1.Daemon
 		},
 		Spec: appsv1.DaemonSetSpec{
 			Selector: &metav1.LabelSelector{
-				MatchLabels: fb.Labels,
+				MatchLabels: getFluentBitLabels(fb.Labels, fb.Spec.Labels),
 			},
 			Template: corev1.PodTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:        fb.Name,
 					Namespace:   fb.Namespace,
-					Labels:      fb.Spec.Labels,
+					Labels:      getFluentBitLabels(fb.Labels, fb.Spec.Labels),
 					Annotations: fb.Spec.Annotations,
 				},
 				Spec: corev1.PodSpec{
@@ -199,4 +199,15 @@ func MakeDaemonSet(fb fluentbitv1alpha2.FluentBit, logPath string) appsv1.Daemon
 	}
 
 	return ds
+}
+
+func getFluentBitLabels(fbLabels map[string]string, fbSpecLabels map[string]string) map[string]string {
+	var allLabels map[string]string
+	for key, val := range fbLabels {
+		allLabels[key] = val
+	}
+	for key, val := range fbSpecLabels {
+		allLabels[key] = val
+	}
+	return allLabels
 }
